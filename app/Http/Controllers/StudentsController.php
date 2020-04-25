@@ -29,6 +29,11 @@ class StudentsController extends Controller
         return view('Student/create');
     }
 
+    public function update(Student $students)
+    {
+        return view('Student/update', ['students' => $students]);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -46,6 +51,8 @@ class StudentsController extends Controller
         Student::create($request->all());
         return redirect('/students')->with('status', 'Data Berhasil Ditambahkan');
     }
+
+
 
     /**
      * Display the specified resource.
@@ -85,9 +92,24 @@ class StudentsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+
+    public function updatedata(Request $request, $id)
     {
-        //
+        $request->validate([
+            'nama' => 'required',
+            'npm' => 'required|size:8',
+            'email' => 'required|unique:students',
+            'jurusan' => 'required'
+        ]);
+        DB::table('students')
+            ->where('id', $id)
+            ->update([
+                'nama' => $request->nama,
+                'npm' => $request->npm,
+                'email' => $request->email,
+                'jurusan' => $request->jurusan,
+            ]);
+        return redirect('/students')->with('status', 'Data Berhasil DiUpdate');
     }
 
     /**

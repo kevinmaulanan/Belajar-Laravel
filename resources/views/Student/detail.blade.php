@@ -11,9 +11,8 @@
                 <h5 class="card-title">{{$students->nama}}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">{{$students->npm}}</h6>
                   <p class="card-text">{{$students->email}}</p>
-                  <button type="submit" class="btn btn-primary">Edit</button>
-                  <button type="submit" class="btn btn-danger">Delete</button>
-                  <button type="submit" class="btn btn-primary">Lihat Nilai</button>
+                  <a href="/students/update/{{$students->id}}" class="btn btn-primary">Edit</a>
+                  <a href="/students/delete/{{$students->id}}" class="btn btn-danger">Delete</a>
 
                   <a  href="/students/nilai/{{$students->id}}" class="badge badge-primary badge-pill">Lihat Nilai</a>
             

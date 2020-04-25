@@ -32,8 +32,9 @@ Route::get('/mahasiswa', 'MahasiswaController@index');
 Route::get('/students', 'StudentsController@index');
 Route::get('/students/create', 'StudentsController@create');
 Route::get('/students/{students}', 'StudentsController@show');
+Route::get('/students/update/{students}', 'StudentsController@update');
 
 Route::get('/students/nilai/{students}', 'StudentsController@nilai');
 
 Route::post('/students', 'StudentsController@store');
-Route::update('/students', 'StudentsController@update');
+Route::patch('/students/update/{students}', 'StudentsController@updatedata');
