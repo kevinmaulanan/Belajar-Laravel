@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class Student extends Migration
+class Matkuls extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,9 @@ class Student extends Migration
      */
     public function up()
     {
-        Schema::create('students', function (Blueprint $table) {
+        Schema::create('matkuls', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('nama');
-            $table->char('npm')->unique();
-            $table->char('email')->unique();
-            $table->string('jurusan');
-
+            $table->string('name_matkul');
             $table->timestamps();
         });
     }

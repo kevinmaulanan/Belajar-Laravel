@@ -27,6 +27,8 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::get('/', 'PagesController@home');
+Route::get('/auth/login', 'AuthsController@login');
+Route::get('/auth/register', 'AuthsController@register');
 Route::get('/about', 'PagesController@about');
 Route::get('/mahasiswa', 'MahasiswaController@index');
 Route::get('/students', 'StudentsController@index');
@@ -35,6 +37,9 @@ Route::get('/students/{students}', 'StudentsController@show');
 Route::get('/students/update/{students}', 'StudentsController@update');
 
 Route::get('/students/nilai/{students}', 'StudentsController@nilai');
+
+Route::post('/auth/login', 'AuthsController@loginpost');
+Route::post('/auth/register', 'AuthsController@registerpost');
 
 Route::post('/students', 'StudentsController@store');
 Route::patch('/students/update/{students}', 'StudentsController@updatedata');

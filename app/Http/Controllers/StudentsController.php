@@ -101,8 +101,7 @@ class StudentsController extends Controller
             'email' => 'required|unique:students',
             'jurusan' => 'required'
         ]);
-        DB::table('students')
-            ->where('id', $id)
+        DB::table('students')->where('id', $id)
             ->update([
                 'nama' => $request->nama,
                 'npm' => $request->npm,

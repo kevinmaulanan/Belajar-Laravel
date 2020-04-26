@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class Matkul extends Migration
+class Students extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,14 @@ class Matkul extends Migration
      */
     public function up()
     {
-        Schema::create('matkuls', function (Blueprint $table) {
+        Schema::create('students', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name_matkul');
+            $table->string('nama');
+            $table->char('npm')->unique();
+            $table->unsignedBigInteger('id_jurusan');
+
+            $table->foreign('id_jurusan')->references('id')->on('jurusans')->onUpdate('cascade')->onDelete('cascade');
+
             $table->timestamps();
         });
     }
