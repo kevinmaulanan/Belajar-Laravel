@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 
 class AuthsController extends Controller
 {
@@ -24,14 +26,25 @@ class AuthsController extends Controller
 
     public function loginPost(Request $request)
     {
-        dd($request);
+
         $request->validate([
-            'email' => 'required|unique:account_students',
+            'email' => 'required',
             'password' => 'required'
         ]);
-        $data = DB::table('account_students')->where('email', $request->email);
-        dd($data);
+
+        $data = DB::table('account_students')->where('email', $request->email)->first();
+        if ($data) {
+            if (Hash::check($request->password, $data->password)) {
+                Session::put('email', $data->email);
+                return redirect('students');
+            } else {
+                return redirect('auth/login')->with('message', 'Password  Salah !');
+            }
+        } else {
+            return redirect('auth/login')->with('message', 'Email Salah!');
+        }
     }
+
 
 
     public function register()
