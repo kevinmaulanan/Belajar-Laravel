@@ -26,9 +26,12 @@ use Illuminate\Support\Facades\Route;
 //     return view('about', ['nama' => $nama]);
 // });
 
-Route::get('/', 'PagesController@home');
+Route::get('/', 'PagesController@home')->middleware('CheckLogin');
+
 Route::get('/auth/login', 'AuthsController@login');
 Route::get('/auth/register', 'AuthsController@register');
+
+
 Route::get('/about', 'PagesController@about');
 Route::get('/mahasiswa', 'MahasiswaController@index');
 Route::get('/students', 'StudentsController@index');

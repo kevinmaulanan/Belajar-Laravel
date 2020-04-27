@@ -15,6 +15,7 @@ class StudentsController extends Controller
      */
     public function index()
     {
+
         $student =  Student::all();
         return view('/student/index', ['students' => $student]);
     }
@@ -34,12 +35,7 @@ class StudentsController extends Controller
         return view('Student/update', ['students' => $students]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(Request $request)
     {
         $request->validate([
@@ -54,12 +50,7 @@ class StudentsController extends Controller
 
 
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function show(Student $students)
     {
         return view('Student/detail', ['students' => $students]);

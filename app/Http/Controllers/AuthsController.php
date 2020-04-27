@@ -34,8 +34,14 @@ class AuthsController extends Controller
 
         $data = DB::table('account_students')->where('email', $request->email)->first();
         if ($data) {
+            $profile = DB::table('students')->where('id', $data->id_student)->first();
+
             if (Hash::check($request->password, $data->password)) {
                 Session::put('email', $data->email);
+                Session::put('nama', $profile->nama);
+                Session::put('npm', $profile->npm);
+                Session::put('foto', $profile->foto);
+                Session::put('login', TRUE);
                 return redirect('students');
             } else {
                 return redirect('auth/login')->with('message', 'Password  Salah !');
