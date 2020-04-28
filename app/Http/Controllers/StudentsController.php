@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class StudentsController extends Controller
 {
@@ -86,19 +87,42 @@ class StudentsController extends Controller
 
     public function updatedata(Request $request, $id)
     {
-        $request->validate([
-            'nama' => 'required',
-            'npm' => 'required|size:8',
-            'email' => 'required|unique:students',
-            'jurusan' => 'required'
-        ]);
-        DB::table('students')->where('id', $id)
-            ->update([
-                'nama' => $request->nama,
-                'npm' => $request->npm,
-                'email' => $request->email,
-                'jurusan' => $request->jurusan,
+        $file = $request->file('file');
+
+        if ($file) {
+            $request->validate([
+                'file' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ]);
+            $fileName = "KEVMAN-" . time() . '.' . $file->getClientOriginalExtension();
+
+            $oldFoto = DB::table('students')->where('id', $id)->value('foto');
+
+            if ($oldFoto == 'default.png') {
+                DB::table('students')->update([
+                    'nama' => $request->nama,
+                    'foto' => $fileName,
+                ]);
+                $file->storeAs('public/img', $fileName);
+            } else {
+                DB::table('students')->update([
+                    'nama' => $request->nama,
+                    'foto' => $fileName,
+                ]);
+                Storage::delete(['public/img/' . $oldFoto]);
+                $file->storeAs('public/img', $fileName);
+            }
+
+
+            return redirect('/')->with('message', 'Data Berhasil DiUpdate');
+        } else {
+            return $request->nama;
+        }
+
+        // DB::table('students')->where('id', $id)
+        //     ->update([
+        //         'nama' => $request->nama,
+        //         'npm' => $request->npm,
+        //     ]);
         return redirect('/students')->with('status', 'Data Berhasil DiUpdate');
     }
 

@@ -37,6 +37,7 @@ class AuthsController extends Controller
             $profile = DB::table('students')->where('id', $data->id_student)->first();
 
             if (Hash::check($request->password, $data->password)) {
+                Session::put('id', $profile->id);
                 Session::put('email', $data->email);
                 Session::put('nama', $profile->nama);
                 Session::put('npm', $profile->npm);
