@@ -55,7 +55,7 @@ class AuthsController extends Controller
                     Session::put('foto', $profile->foto);
                     Session::put('login', TRUE);
 
-                    return redirect('students');
+                    return redirect('/');
                 }
             } else {
                 return redirect('auth/login')->with('message', 'Password  Salah !');
@@ -86,6 +86,7 @@ class AuthsController extends Controller
             DB::table('students')->insert([
                 'nama' => $request->email,
                 'npm' => $maxNPM + 1,
+                'foto' => 'default.png',
                 'id_jurusan' => 1,
             ]);
         } else {
@@ -93,6 +94,7 @@ class AuthsController extends Controller
             DB::table('students')->insert([
                 'nama' => $request->email,
                 'npm' => $maxNPMNew,
+                'foto' => 'default.png',
                 'id_jurusan' => 1,
             ]);
         }
@@ -104,17 +106,36 @@ class AuthsController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
             'id_student' => $maxIdStudents,
-            'token' => base64_encode(random_bytes(32)),
+            'token' => bin2hex(random_bytes(32)),
         ]);
 
         $data =  DB::table('account_students')->where('email', $request->email)->value('token');
 
-        Mail::send('Auth/sendemail', ['token' => $data], function ($message) use ($request) {
+        Mail::send('Auth/sendemail', ['token' => $data, 'email' => $request->email], function ($message) use ($request) {
             $message->to([$request->email])->subject('Verification');
             $message->from('ptkevman@gmail.com', 'Kevman');
         });
 
-        return redirect('auth/login')->with('message', 'Data berhasil di register, silahkan login');
+        return redirect('auth/login')->with('message', 'Data berhasil di register, silahkan check Email');
+    }
+
+
+    public function verify(Request $request)
+    {
+        $email = $request->input('email');
+        $token = $request->input('token');
+        $user = DB::table('account_students')->where('token', $token)->where('email', $email)->first();
+
+
+        if ($user) {
+            DB::table('account_students')->where('email', $email)->update([
+                'is_verifed' => 1,
+                'token' => bin2hex(random_bytes(32)),
+            ]);
+            return redirect('auth/login')->with('message', 'Data berhasil di verifikasi, silahkan login');
+        } else {
+            return redirect('auth/login')->with('message', 'Kesalahan URL Server');
+        }
     }
     /**
      * Show the form for creating a new resource.

@@ -17,6 +17,7 @@ class Students extends Migration
             $table->bigIncrements('id');
             $table->string('nama');
             $table->char('npm')->unique();
+            $table->string('foto');
             $table->unsignedBigInteger('id_jurusan');
 
             $table->foreign('id_jurusan')->references('id')->on('jurusans')->onUpdate('cascade')->onDelete('cascade');

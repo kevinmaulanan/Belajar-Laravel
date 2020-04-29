@@ -45,6 +45,7 @@ Route::get('/students/nilai/{students}', 'StudentsController@nilai');
 
 Route::post('/auth/login', 'AuthsController@loginpost');
 Route::post('/auth/register', 'AuthsController@registerpost');
+Route::get('/verify', 'AuthsController@verify');
 
 Route::post('/students', 'StudentsController@store');
 Route::patch('/students/update/{students}', 'StudentsController@updatedata');

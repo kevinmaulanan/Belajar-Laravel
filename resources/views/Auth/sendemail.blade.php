@@ -432,9 +432,9 @@
                                 <tr>
                                   <td class="cta-shadow" align="center" bgcolor=""
                                     style="border-radius: 40px; -webkit-border-radius: 40px; -moz-border-radius: 40px;">
-                                    <a href="https://www.lyft.com/" target="_blank"
+                                      <a href="http://127.0.0.1:8000/verify?email={{$email}}&&token={{$token}}" target="_blank"
                                       style="font-family: Arial, Helvetica, sans-serif; font-size: 16px; line-height: 1.0; font-weight: bold; color: #000000; text-transform: uppercase; text-decoration: none; border-radius: 30px; -webkit-border-radius: 30px; -moz-border-radius: 30px; display: block; padding: 12px 25px 12px 25px;">
-                                      <h2> {{$token}}</h2>
+                                      <h2> Klik Untuk Verify</h2>
                                     </a>
                                   </td>
                                 </tr>
