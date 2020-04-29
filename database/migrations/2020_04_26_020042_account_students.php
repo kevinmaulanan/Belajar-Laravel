@@ -17,7 +17,9 @@ class AccountStudents extends Migration
             $table->bigIncrements('id');
             $table->string('email', 255);
             $table->string('password', 255);
+            $table->string('token', 255);
             $table->unsignedBigInteger('id_student');
+            $table->integer('is_verifed')->default(0);
 
             $table->foreign('id_student')->references('id')->on('students')->onDelete('cascade')->onUpdate('cascade');
 
