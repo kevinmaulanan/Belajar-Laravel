@@ -28,6 +28,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', 'PagesController@home')->middleware('CheckLogin');
 
+Route::get('/maps', 'MapsController@index')->middleware('CheckLogin');
+
 Route::get('/auth/login', 'AuthsController@login');
 Route::get('/auth/register', 'AuthsController@register');
 
@@ -36,7 +38,17 @@ Route::get('/about', 'PagesController@about');
 Route::get('/mahasiswa', 'MahasiswaController@index');
 Route::get('/students', 'StudentsController@index');
 Route::get('/students/create', 'StudentsController@create');
+
+
+//get page image students
+Route::get('/students/image', 'StudentsController@image');
+
+
 Route::get('/students/{students}', 'StudentsController@show');
+
+
+
+Route::post('/students/image/create', 'StudentsController@postimage');
 
 
 Route::get('/students/myprofile/{students}', 'StudentsController@update');

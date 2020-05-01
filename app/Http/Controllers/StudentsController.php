@@ -6,26 +6,16 @@ use App\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Session;
 
 class StudentsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-
         $student =  Student::all();
         return view('/student/index', ['students' => $student]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         return view('Student/create');
@@ -49,14 +39,43 @@ class StudentsController extends Controller
         return redirect('/students')->with('status', 'Data Berhasil Ditambahkan');
     }
 
-
-
-
     public function show(Student $students)
     {
         return view('Student/detail', ['students' => $students]);
     }
 
+    public function image(Request $request)
+    {
+        //check if input page
+        if ($request->input('page')) {
+            $page = $request->input('page');
+        } else {
+            $page = 1;
+        }
+
+        //get id usr login
+        $id = Session::get('id');
+
+        //get count for check data and looping pagination
+        $count = ceil(DB::table('image_students')->where('id_student', $id)->count() / 6);
+
+        //get data from next and pref page
+        $next = $page + 1;
+        $pref = $page - 1;
+
+        //get data
+        $data = DB::table('image_students')->where('id_student', $id)->limit(6)->offset(($page - 1)  * 6)->get();
+
+        //create new array for lopping pagination
+        $number = range(1, $count);
+
+        //check data
+        if ($count !== 0) {
+            return view('Student/image', ['data' => $data, 'total' => $number, 'active' => $page, 'next' => $next, 'pref' => $pref]);
+        } else {
+            return view('Student/image', ['data' => null, 'message' => 'Tidak ada foto yang ditampilkan']);
+        }
+    }
 
     public function nilai(Student $students)
     {
@@ -67,73 +86,92 @@ class StudentsController extends Controller
         return view('Student/nilai', ['nilai' => $nilai, 'name' => $nameStudents]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Student $students)
-    {
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-
     public function updatedata(Request $request, $id)
     {
+        //get file
         $file = $request->file('file');
 
+        //check input name
+        $request->validate([
+            'nama' => 'required'
+        ]);
+
+        //get email by user login
+        $profileLogin = Session::get('email');
+
+        //check if there is an file
         if ($file) {
+
+            //check input file, whether image file or not
             $request->validate([
                 'file' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ]);
-            $fileName = "KEVMAN-" . time() . '.' . $file->getClientOriginalExtension();
 
+            //get a name for the image to be uploaded
+            $fileName = 'KEVMAN-' . $profileLogin . '-' . time() . '.' . $file->getClientOriginalExtension();
+
+            //get oldfoto profile
             $oldFoto = DB::table('students')->where('id', $id)->value('foto');
 
+
+            //check oldfoto profile
             if ($oldFoto == 'default.png') {
                 DB::table('students')->update([
                     'nama' => $request->nama,
                     'foto' => $fileName,
                 ]);
+
                 $file->storeAs('public/img', $fileName);
             } else {
                 DB::table('students')->update([
                     'nama' => $request->nama,
                     'foto' => $fileName,
                 ]);
+
+                //delete image from store
                 Storage::delete(['public/img/' . $oldFoto]);
+
+                //Save image to store
                 $file->storeAs('public/img', $fileName);
             }
-
-
-            return redirect('/')->with('message', 'Data Berhasil DiUpdate');
         } else {
-            return $request->nama;
-        }
 
-        // DB::table('students')->where('id', $id)
-        //     ->update([
-        //         'nama' => $request->nama,
-        //         'npm' => $request->npm,
-        //     ]);
-        return redirect('/students')->with('status', 'Data Berhasil DiUpdate');
+            //if there is no input file, then only the name input
+            DB::table('students')->where('id', $id)
+                ->update([
+                    'nama' => $request->nama,
+                ]);
+        }
+        return redirect('/')->with('status', 'Data Berhasil DiUpdate');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+
+    public function postimage(Request $request)
     {
-        //
+        //check input file, whether image file or not
+        $request->validate([
+            'file' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        //get image data
+        $file = $request->file('file');
+
+        //check id and email user login
+        $id = Session::get('id');
+        $profileLogin = Session::get('email');
+
+        //get a name for the image to be uploaded 
+        $fileName = 'KEVMAN-Collection' . $profileLogin . '-' . time() . '.' . $file->getClientOriginalExtension();
+
+        //insert data to database
+        DB::table('image_students')->insert([
+            'image_student' => $fileName,
+            'id_student' => $id,
+        ]);
+
+        //Save image to store
+        $file->storeAs('public/img/collection', $fileName);
+
+        return redirect('students/image')->with('message', 'Data Berhasil Ditambahkan');
     }
 }
